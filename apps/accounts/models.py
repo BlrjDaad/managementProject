@@ -73,7 +73,7 @@ class Employee(BaseUser):
     accept_medical_sharing = models.BooleanField(default=False)
     assigned_to_company = models.BooleanField(default=False)
     update_email = models.BooleanField(default=False)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, related_name='employees', on_delete=models.CASCADE)
 
 
 class MedicalRecord(models.Model):

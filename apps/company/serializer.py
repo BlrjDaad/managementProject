@@ -1,22 +1,26 @@
-from .models import *
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from .models import *
+from ..accounts.serializer import EmployeeSerializer
 
 
 # Serializers define the API representation.
 class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
+    employees = EmployeeSerializer(many=True)
 
     class Meta:
         model = Department
-        fields = ['name',
+        fields = ['pk',
+                  'name',
                   'description',
                   'logo',
-                  'logo_name']
+                  'logo_name',
+                  'employees']
 
 
 # Serializers define the API representation.
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
-    departments = DepartmentSerializer(many=True, read_only=True)
+    departments = DepartmentSerializer(many=True)
 
     class Meta:
         model = Company

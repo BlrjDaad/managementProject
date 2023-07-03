@@ -25,7 +25,7 @@ class CompanyList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CompanyDetail(APIView):
+class CompanyView(APIView):
     """
     Retrieve, update or delete a company instance.
     """
@@ -54,6 +54,15 @@ class CompanyDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+def post(request, company_pk, format=None):
+    serializer = DepartmentSerializer(data=request.data)
+    if serializer.is_valid():
+        org = Company.objects.filter(id=company_pk).first()
+        serializer.save(company=org)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class DepartmentList(APIView):
     """
     List all departments, or create a new department.
@@ -65,19 +74,8 @@ class DepartmentList(APIView):
         serializer = DepartmentSerializer(snippets, many=True)
         return Response(serializer.data)
 
-    def post(self, request, company_pk, format=None):
-        print("========================")
-        print(self.kwargs)
-        print(company_pk)
-        serializer = DepartmentSerializer(data=request.data)
-        if serializer.is_valid():
-            org = Company.objects.filter(id=company_pk).first()
-            serializer.save(company=org)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class DepartmentDetail(APIView):
+class DepartmentView(APIView):
     """
     Retrieve, update or delete a department instance.
     """
@@ -87,7 +85,7 @@ class DepartmentDetail(APIView):
         except Company.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
+    def get(self, request, pk, company_pk, format=None):
         snippet = self.get_object(pk)
         serializer = DepartmentSerializer(snippet)
         return Response(serializer.data)

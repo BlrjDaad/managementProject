@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from .models import Employee
 from .serializer import EmployeeSerializer
+from ..company.models import Department
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,20 +15,21 @@ class EmployeeList(APIView):
     List all users, or create a new user.
     """
 
-    def get(self, request, format=None):
-        snippets = Employee.objects.all()
+    def get(self, request, company_pk, department_pk, format=None):
+        snippets = Employee.objects.filter(department_id=department_pk)
         serializer = EmployeeSerializer(snippets, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def post(self, request, company_pk, department_pk, format=None):
+        department = get_object_or_404(Department, pk=department_pk)
         serializer = EmployeeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(department=department)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class EmployeeDetail(APIView):
+class EmployeeView(APIView):
     """
     Retrieve, update or delete a user instance.
     """
@@ -36,7 +39,7 @@ class EmployeeDetail(APIView):
         except Employee.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
+    def get(self, request, pk, company_pk, department_pk, format=None):
         snippet = self.get_object(pk)
         serializer = EmployeeSerializer(snippet)
         return Response(serializer.data)
