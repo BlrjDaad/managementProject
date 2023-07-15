@@ -27,8 +27,8 @@ class BaseUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    role = models.IntegerField()
-    subrole = models.IntegerField()
+    role = models.IntegerField(default=3)
+    subrole = models.IntegerField(default=2)
 
     first_name = models.CharField(
         max_length=128,
@@ -99,4 +99,5 @@ class MedicalRecord(models.Model):
 
 
 class Manager(BaseUser):
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, blank=True, null=True)
+    company = models.ForeignKey(Company, related_name='managers',
+                                on_delete=models.SET_NULL, blank=True, null=True)

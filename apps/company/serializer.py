@@ -1,12 +1,14 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import *
-from ..accounts.serializer import EmployeeSerializer
+from ..accounts.serializer import EmployeeSerializer, ManagerSerializer
+from ..invitations.serializer import EmployeeInvitationSerializer
 
 
 # Serializers define the API representation.
 class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
     employees = EmployeeSerializer(many=True)
+    invitations = EmployeeInvitationSerializer(many=True)
 
     class Meta:
         model = Department
@@ -15,12 +17,14 @@ class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
                   'description',
                   'logo',
                   'logo_name',
-                  'employees']
+                  'employees',
+                  'invitations']
 
 
 # Serializers define the API representation.
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     departments = DepartmentSerializer(many=True)
+    managers = ManagerSerializer(many=True)
 
     class Meta:
         model = Company
@@ -38,7 +42,8 @@ class CompanySerializer(serializers.HyperlinkedModelSerializer):
                   'date_expiration',
                   'paid',
                   'sending_interval',
-                  'departments']
+                  'departments',
+                  'managers']
 
 
 

@@ -54,15 +54,6 @@ class CompanyView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-def post(request, company_pk, format=None):
-    serializer = DepartmentSerializer(data=request.data)
-    if serializer.is_valid():
-        org = Company.objects.filter(id=company_pk).first()
-        serializer.save(company=org)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class DepartmentList(APIView):
     """
     List all departments, or create a new department.
@@ -73,6 +64,14 @@ class DepartmentList(APIView):
         snippets = Department.objects.filter(company_id=company.pk)
         serializer = DepartmentSerializer(snippets, many=True)
         return Response(serializer.data)
+
+    def post(request, company_pk, format=None):
+        serializer = DepartmentSerializer(data=request.data)
+        if serializer.is_valid():
+            org = Company.objects.filter(id=company_pk).first()
+            serializer.save(company=org)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DepartmentView(APIView):
