@@ -7,8 +7,8 @@ from ..invitations.serializer import EmployeeInvitationSerializer
 
 # Serializers define the API representation.
 class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
-    employees = EmployeeSerializer(many=True)
-    invitations = EmployeeInvitationSerializer(many=True)
+    employees = EmployeeSerializer(many=True, required=False)
+    invitations = EmployeeInvitationSerializer(many=True, required=False)
 
     class Meta:
         model = Department
@@ -23,12 +23,13 @@ class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
 
 # Serializers define the API representation.
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
-    departments = DepartmentSerializer(many=True)
-    managers = ManagerSerializer(many=True)
+    departments = DepartmentSerializer(many=True, required=False)
+    managers = ManagerSerializer(many=True, required=False)
 
     class Meta:
         model = Company
-        fields = ['name',
+        fields = ['pk',
+                  'name',
                   'description',
                   'universal_name',
                   'company_type',

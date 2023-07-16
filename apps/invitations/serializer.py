@@ -13,7 +13,7 @@ class InvitationInfoSerializer(serializers.HyperlinkedModelSerializer):
 
 # Serializers define the API representation.
 class EmployeeInvitationSerializer(serializers.HyperlinkedModelSerializer):
-    invitations_info = InvitationInfoSerializer(many=True)
+    invitation_info = InvitationInfoSerializer(many=True, required=False)
 
     class Meta:
         model = EmployeeInvitation
@@ -22,7 +22,7 @@ class EmployeeInvitationSerializer(serializers.HyperlinkedModelSerializer):
                   "token",
                   "send_at",
                   "is_expired",
-                  "invitations_info"
+                  "invitation_info"
                   ]
 
 

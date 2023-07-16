@@ -65,7 +65,7 @@ class DepartmentList(APIView):
         serializer = DepartmentSerializer(snippets, many=True)
         return Response(serializer.data)
 
-    def post(request, company_pk, format=None):
+    def post(self,request, company_pk, format=None):
         serializer = DepartmentSerializer(data=request.data)
         if serializer.is_valid():
             org = Company.objects.filter(id=company_pk).first()
