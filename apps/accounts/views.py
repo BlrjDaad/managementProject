@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 
 # Create your views here.
@@ -14,6 +15,8 @@ class EmployeeList(APIView):
     """
     List all users, or create a new user.
     """
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, company_pk, department_pk, format=None):
         snippets = Employee.objects.filter(department_id=department_pk)
@@ -33,6 +36,8 @@ class EmployeeView(APIView):
     """
     Retrieve, update or delete a user instance.
     """
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Employee.objects.get(pk=pk)
@@ -62,6 +67,7 @@ class ManagerList(APIView):
     """
     List all users, or create a new user.
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, company_pk, format=None):
         snippets = Manager.objects.filter(company_id=company_pk)
@@ -81,6 +87,8 @@ class ManagerView(APIView):
     """
     Retrieve, update or delete a user instance.
     """
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Manager.objects.get(pk=pk)

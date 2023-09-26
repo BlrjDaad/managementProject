@@ -4,9 +4,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 
-# Create your views here.
 class CompanyList(APIView):
     """
     List all company, or create a new company.
@@ -29,6 +29,8 @@ class CompanyView(APIView):
     """
     Retrieve, update or delete a company instance.
     """
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Company.objects.get(pk=pk)
@@ -58,6 +60,7 @@ class DepartmentList(APIView):
     """
     List all departments, or create a new department.
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, company_pk):
         company = get_object_or_404(Company, pk=company_pk)
@@ -78,6 +81,8 @@ class DepartmentView(APIView):
     """
     Retrieve, update or delete a department instance.
     """
+    permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Department.objects.get(pk=pk)

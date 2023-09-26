@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
 
 from .models import *
 from .serializer import *
@@ -14,6 +16,7 @@ class InvitationsList(APIView):
     """
     List all invitation, or create a new company.
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, company_pk, department_pk, format=None):
 
@@ -22,14 +25,16 @@ class InvitationsList(APIView):
         return Response(serializer.data)
 
     def post(self, request, company_pk, department_pk, format=None):
-        serializer_info = InvitationInfoSerializer(data=request.data.get("invitation_info"))
-        email = request.data.get("invitation_info").get('email')
+        invitations_infos = request.data.get("invitation_info")
+        del request.data["invitation_info"]
         serializer_invi = EmployeeInvitationSerializer(data=request.data)
-        if serializer_info.is_valid() and serializer_invi.is_valid():
+        if serializer_invi.is_valid():
             org = Department.objects.filter(id=department_pk).first()
-            serializer_info.save()
-            invitation_info = InvitationInfo.objects.filter(email=email).first()
-            serializer_invi.save(department=org, invitation_info=invitation_info)
+            invitation_obj = serializer_invi.save(department=org)
+            for invitation_info in invitations_infos:
+                serializer_info = InvitationInfoSerializer(data=invitation_info)
+                if serializer_info.is_valid():
+                    serializer_info.save(invitation=invitation_obj)
             return Response(serializer_invi.data, status=status.HTTP_201_CREATED)
         return Response(serializer_invi.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -38,20 +43,18 @@ class InvitationView(APIView):
     """
     Retrieve, update or delete a company instance.
     """
-    def get_object(self, pk):
-        try:
-            return Company.objects.get(pk=pk)
-        except Company.DoesNotExist:
-            raise Http404
 
-    def get(self, request, pk, format=None):
-        snippet = self.get_object(pk)
-        serializer = CompanySerializer(snippet)
+    serializer_class = EmployeeInvitationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, company_pk, department_pk, pk, format=None):
+        snippets = EmployeeInvitation.objects.filter(pk=pk)
+        serializer = EmployeeInvitationSerializer(snippets, many=True)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
         snippet = self.get_object(pk)
-        serializer = CompanySerializer(snippet, data=request.data)
+        serializer = EmployeeInvitationSerializer(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
