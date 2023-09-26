@@ -3,13 +3,13 @@ from datetime import datetime
 
 from .constants import *
 from ..accounts.models import Employee
-from ..invitations.models import InvitationInfo
+from ..invitations.models import BaseInvitation
 
 
 class Questionnaire(models.Model):
     date = models.DateTimeField(null=True, default=datetime.utcnow)
-    employee = models.ForeignKey(Employee, null=True, on_delete=models.SET_NULL)
-    invitation = models.ForeignKey(InvitationInfo, on_delete=models.SET_NULL, null=True)
+    employee = models.ForeignKey(Employee, null=True, on_delete=models.SET_NULL, related_name="questionnaires")
+    invitation = models.ForeignKey(BaseInvitation, on_delete=models.SET_NULL, null=True, related_name="questionnaires")
     is_finished = models.BooleanField(default=False)
     
 
@@ -23,7 +23,7 @@ class RpsQuestionnaire(models.Model):
         max_length=50,
         default=QuestionnaireType[0][0]
     )
-    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="RpsQuestionnaires")
 
 
 class QuestionCategory(models.Model):
@@ -32,11 +32,11 @@ class QuestionCategory(models.Model):
 
 
 class QuestionCategoryQuestionnaire(QuestionCategory):
-    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="categories")
 
 
 class RpsQuestionCategory(QuestionCategory):
-    questionnaire = models.ForeignKey(RpsQuestionnaire, on_delete=models.CASCADE)
+    questionnaire = models.ForeignKey(RpsQuestionnaire, on_delete=models.CASCADE, related_name="RpsCategories")
 
 
 class Question(models.Model):
@@ -47,8 +47,8 @@ class Question(models.Model):
 
 
 class QuestionHealth(Question):
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, related_name="questions")
 
 
 class RpsQuestion(Question):
-    category = models.ForeignKey(RpsQuestionCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(RpsQuestionCategory, on_delete=models.CASCADE, related_name="RpsQuestions")

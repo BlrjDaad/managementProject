@@ -5,7 +5,6 @@ from ..accounts.serializer import EmployeeSerializer, ManagerSerializer
 from ..invitations.serializer import EmployeeInvitationSerializer
 
 
-# Serializers define the API representation.
 class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
     employees = EmployeeSerializer(many=True, required=False)
     invitations = EmployeeInvitationSerializer(many=True, required=False)

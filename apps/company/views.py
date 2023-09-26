@@ -65,10 +65,14 @@ class DepartmentList(APIView):
     def get(self, request, company_pk):
         company = get_object_or_404(Company, pk=company_pk)
         snippets = Department.objects.filter(company_id=company.pk)
-        serializer = DepartmentSerializer(snippets, many=True)
+        serializer_context = {
+            'request': request,
+        }
+        print("Hiiiiiiiiiiiiiiiiiiiiiiiiii")
+        serializer = DepartmentSerializer(snippets, many=True, context=serializer_context)
         return Response(serializer.data)
 
-    def post(self,request, company_pk, format=None):
+    def post(self, request, company_pk):
         serializer = DepartmentSerializer(data=request.data)
         if serializer.is_valid():
             org = Company.objects.filter(id=company_pk).first()

@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import *
 
@@ -13,7 +12,7 @@ class InvitationInfoSerializer(serializers.HyperlinkedModelSerializer):
 
 # Serializers define the API representation.
 class EmployeeInvitationSerializer(serializers.HyperlinkedModelSerializer):
-    invitation_info = InvitationInfoSerializer(many=True, required=False)
+    invitations_infos = InvitationInfoSerializer(many=True, required=False)
 
     class Meta:
         model = EmployeeInvitation
@@ -22,7 +21,7 @@ class EmployeeInvitationSerializer(serializers.HyperlinkedModelSerializer):
                   "token",
                   "send_at",
                   "is_expired",
-                  "invitation_info"
+                  "invitations_infos"
                   ]
 
 

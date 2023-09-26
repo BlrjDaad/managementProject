@@ -27,8 +27,8 @@ class BaseUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    role = models.IntegerField(default=3)
-    subrole = models.IntegerField(default=2)
+    role = models.IntegerField(default=3)  # 3 employee, 2 manager, 1 admin
+    subrole = models.IntegerField(default=2)  # 1 superAdmin 2 normal Admin
 
     first_name = models.CharField(
         max_length=128,
@@ -51,6 +51,9 @@ class BaseUser(AbstractBaseUser):
         max_length=10000,
         default=""
     )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     def add_role(self, role):
         if not self.has_role(role):

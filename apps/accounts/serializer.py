@@ -1,9 +1,11 @@
 from .models import *
 from rest_framework import serializers
+from ..questionnaire.serializer import QuestionnaireSerializer
 
 
 # Serializers define the API representation.
 class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+    questionnaires = QuestionnaireSerializer(many=True, required=False)
 
     class Meta:
         model = Employee
@@ -18,7 +20,8 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
                   'last_seen',
                   'deleted_at',
                   'first_connection',
-                  'welcome_msg']
+                  'welcome_msg',
+                  'questionnaires']
 
 
 class ManagerSerializer(serializers.HyperlinkedModelSerializer):

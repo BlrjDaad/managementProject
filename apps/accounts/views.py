@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
+from ..questionnaire.models import Questionnaire
+
 
 # Create your views here.
 class EmployeeList(APIView):
@@ -44,12 +46,12 @@ class EmployeeView(APIView):
         except Employee.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, company_pk, department_pk, format=None):
+    def get(self, request, pk, company_pk, department_pk):
         employee = self.get_object(pk)
         serializer = EmployeeSerializer(employee)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
+    def put(self, request, pk):
         snippet = self.get_object(pk)
         serializer = EmployeeSerializer(snippet, data=request.data)
         if serializer.is_valid():
@@ -57,7 +59,7 @@ class EmployeeView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
+    def delete(self, request, pk):
         snippet = self.get_object(pk)
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
